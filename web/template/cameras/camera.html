@@ -1,0 +1,19 @@
+{{ template "web/template/layouts/header.html"}}
+        <div class="page-wrapper flex">
+
+            <div class="take-picture">
+                <h3>{{.ip}}:{{.port}} {{.name}}</h3>
+                <div class="tp-view">
+                    <img src="/api/listCameras/{{.ip}}/{{.port}}/video" width="600" height="750">
+                    <a href="/setProcess"><button class="tp-input flex"> Применить</button></a>
+                </div>    
+                <div class="switch">
+                    <h2>Включить распознавание жестов:
+                        <input id="State" type="checkbox" name="setProcess">
+                        <link rel="stylesheet" href="/assets/css/checkbox.css">
+                    </h2>   
+                </div>
+                
+                
+        </div>
+{{ template "web/template/layouts/footer.html" .}}

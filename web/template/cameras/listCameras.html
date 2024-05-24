@@ -1,0 +1,16 @@
+{{ template "web/template/layouts/header.html" .}}
+    <title>Список камер </title>
+    <div class="page-wrapper flex">
+        {{range .cameras }}
+            <div class="tp-view">
+            <a href="{{.Ip}}/{{.Port}}"><label>{{.Ip}}/{{.Port}}</label></a>
+            <a href="{{.Ip}}/{{.Port}}/delete"><button class="tp-input flex">Удалить камеру</button></a>
+            </div>
+        {{else}}
+            <div class="tp-view">
+                <h2>Добавьте камеру чтобы начать работу</h2>
+            </div>
+        {{end}}
+    <a href="add"><button class="tp-input flex">Добавить</button></a>
+    </div>
+{{ template "web/template/layouts/footer.html" .}}dd

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "/auth";
+
+service Auth {
+    rpc userEnter (EnterRequest) returns (EnterResponse) {}
+    rpc getUserID (IDRequest) returns (IDResponse) {}
+}
+
+message EnterRequest {
+    string email = 1;
+    string pass = 2;
+}
+
+message EnterResponse {
+    string token = 1;
+}
+
+message IDRequest {
+    string token = 1;
+}
+
+message IDResponse {
+    int64 id = 1;
+}

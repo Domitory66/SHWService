@@ -1,0 +1,17 @@
+{{ template "web/template/layouts/authheader.html" .}}
+<title>Данной камеры не существует, проверьте правильность ввода </title>
+    <div class="flex login-wrapper1">
+
+         <div class="login-right">
+            <img src="/assets/img/logo.jpg">
+        </div>
+
+        <div class="login-left flex" >
+            <div class="ll-wrap">
+                <h3>Данной камеры не существует, проверьте правильность ввода</h3>
+                <a href="add"><button class="tp-input flex">Повторить ввод</button></a>
+                <a href="/api/listCameras"><button class="tp-input flex">Вернуться к списку</button></a>
+            </div>
+        </div>
+
+{{ template "web/template/layouts/authfooter.html" .}}
