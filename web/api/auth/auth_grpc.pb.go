@@ -8,6 +8,7 @@ package auth
 
 import (
 	context "context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -23,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
 	UserEnter(ctx context.Context, in *EnterRequest, opts ...grpc.CallOption) (*EnterResponse, error)
+	Registration(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*EnterResponse, error)
 	GetUserID(ctx context.Context, in *IDRequest, opts ...grpc.CallOption) (*IDResponse, error)
 }
 
@@ -43,6 +45,15 @@ func (c *authClient) UserEnter(ctx context.Context, in *EnterRequest, opts ...gr
 	return out, nil
 }
 
+func (c *authClient) Registration(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*EnterResponse, error) {
+	out := new(EnterResponse)
+	err := c.cc.Invoke(ctx, "/Auth/registration", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authClient) GetUserID(ctx context.Context, in *IDRequest, opts ...grpc.CallOption) (*IDResponse, error) {
 	out := new(IDResponse)
 	err := c.cc.Invoke(ctx, "/Auth/getUserID", in, out, opts...)
@@ -57,6 +68,7 @@ func (c *authClient) GetUserID(ctx context.Context, in *IDRequest, opts ...grpc.
 // for forward compatibility
 type AuthServer interface {
 	UserEnter(context.Context, *EnterRequest) (*EnterResponse, error)
+	Registration(context.Context, *empty.Empty) (*EnterResponse, error)
 	GetUserID(context.Context, *IDRequest) (*IDResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
@@ -67,6 +79,9 @@ type UnimplementedAuthServer struct {
 
 func (UnimplementedAuthServer) UserEnter(context.Context, *EnterRequest) (*EnterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserEnter not implemented")
+}
+func (UnimplementedAuthServer) Registration(context.Context, *empty.Empty) (*EnterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Registration not implemented")
 }
 func (UnimplementedAuthServer) GetUserID(context.Context, *IDRequest) (*IDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserID not implemented")
@@ -102,6 +117,24 @@ func _Auth_UserEnter_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_Registration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).Registration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Auth/registration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).Registration(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Auth_GetUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IDRequest)
 	if err := dec(in); err != nil {
@@ -130,6 +163,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "userEnter",
 			Handler:    _Auth_UserEnter_Handler,
+		},
+		{
+			MethodName: "registration",
+			Handler:    _Auth_Registration_Handler,
 		},
 		{
 			MethodName: "getUserID",
