@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SmartHomeWebCam/SHWService/web/api/auth"
 	gen "SmartHomeWebCam/SHWService/web/api/camera"
 	video "SmartHomeWebCam/SHWService/web/api/video"
 	"SmartHomeWebCam/SHWService/web/app"
@@ -27,24 +28,25 @@ func main() {
 
 	log.Log.Info("Start initialization services")
 
-	log.Log.Info("Start Analytics service")
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 
-	conAnalytics, err := grpc.DialContext(ctx, "localhost:6200", grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conAnalytics, err := grpc.DialContext(ctx, viper.GetString("analyticsServiceAddr"), grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Log.Fatal("Analytics service not started ", err.Error())
 	}
-	conVS, err := grpc.DialContext(context.Background(), "localhost:6201", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conVS, err := grpc.DialContext(context.Background(), viper.GetString("analyticsVideoStream"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Log.Fatal("Analytics service not ready for stream ", err.Error())
 	}
+	conAuth, err := grpc.DialContext(context.Background(), viper.GetString("authServiceAddr"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Log.Fatal("Auth service not started ", err.Error())
+	}
 	clientAnalytics := gen.NewCameraWorkerClient(conAnalytics)
 	videoStream := video.NewVideoStreamClient(conVS)
-	//TODO clientAuth
-	//TODO clientSH
-	services := service.New(clientAnalytics, videoStream)
+	authClient := auth.NewAuthClient(conAuth)
+	services := service.New(clientAnalytics, videoStream, authClient)
 	handlers := handler.New(services)
 
 	srv := new(app.Server)

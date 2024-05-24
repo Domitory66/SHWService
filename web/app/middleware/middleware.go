@@ -8,8 +8,7 @@ import (
 
 func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("UUID", "0")
-		//TODO валидация
+		c.Param("Auth")
 		log.Println(c.ClientIP(), c.Request.Method, c.Request.URL.Path)
 		c.Next()
 	}
