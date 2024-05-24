@@ -12,6 +12,6 @@ type Service struct {
 	auth.AuthClient
 }
 
-func New(camClient gen.CameraWorkerClient, stream video.VideoStreamClient) *Service {
-	return &Service{CameraWorkerClient: camClient, VideoStreamClient: stream}
+func New(camClient gen.CameraWorkerClient, stream video.VideoStreamClient, authClient auth.AuthClient) *Service {
+	return &Service{CameraWorkerClient: camClient, VideoStreamClient: stream, AuthClient: authClient}
 }

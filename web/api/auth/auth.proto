@@ -1,10 +1,12 @@
 syntax = "proto3";
 
 option go_package = "/auth";
-
+import "google/protobuf/empty.proto";
 service Auth {
     rpc userEnter (EnterRequest) returns (EnterResponse) {}
+    rpc registration(google.protobuf.Empty) returns (EnterResponse){}
     rpc getUserID (IDRequest) returns (IDResponse) {}
+    rpc isValid (isValidRequest) returns (isValidResponse) {}
 }
 
 message EnterRequest {
@@ -14,6 +16,14 @@ message EnterRequest {
 
 message EnterResponse {
     string token = 1;
+}
+
+message isValidRequest {
+    string token = 1;
+}
+
+message isValidResponse {
+    bool isValid = 1;
 }
 
 message IDRequest {
