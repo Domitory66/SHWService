@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+option go_package = "/cameraservice";
+
+service CameraWorker {
+    rpc Find (FindRequest) returns (FindResponse) {}
+    rpc Add(AddRequest) returns(AddResponse) {}
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+    rpc Cameras(CamerasRequest) returns(CamerasResponse) {}
+    rpc GetByPortAndIp(GetRequest) returns(GetResponse) {}
+}
+
+message Camera {
+    string name = 1;
+    string port = 2;
+    string ip = 3;
+    string protocol = 4;
+    string filename = 5;
+}
+
+message FindRequest {
+    Camera camera = 1;
+}
+
+message FindResponse {
+    bool found = 1;
+}
+
+message AddRequest {
+    uint32 userID = 1;
+    Camera camera = 2;
+}
+
+message AddResponse {
+    bool saved = 2;
+}
+
+message DeleteRequest {
+    uint32 userID = 1;
+    Camera camera = 2;
+}
+
+message DeleteResponse {
+    bool deleted = 1;
+}
+
+message CamerasRequest {
+    uint32 userID = 1;
+}
+
+message CamerasResponse {
+    repeated Camera Cameras = 1;
+}
+
+message GetRequest {
+    string port = 1;
+    string ip = 2;
+}
+
+message GetResponse {
+    Camera camera = 1;
+}
